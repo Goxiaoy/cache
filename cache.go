@@ -46,7 +46,7 @@ type Item struct {
 
 	// TTL is the cache expiration time.
 	// Default TTL is 1 hour.
-	TTL time.Duration
+	TTL *time.Duration
 
 	// Do returns value to be cached.
 	Do func(*Item) (interface{}, error)
@@ -80,20 +80,21 @@ func (item *Item) value() (interface{}, error) {
 
 func (item *Item) ttl() time.Duration {
 	const defaultTTL = time.Hour
-
-	if item.TTL < 0 {
+	if item.TTL == nil {
+		return defaultTTL
+	}
+	if *item.TTL == 0 {
 		return 0
 	}
-
-	if item.TTL != 0 {
-		if item.TTL < time.Second {
-			log.Printf("too short TTL for key=%q: %s", item.Key, item.TTL)
-			return defaultTTL
-		}
-		return item.TTL
+	if *item.TTL <= -1 {
+		return -1
 	}
 
-	return defaultTTL
+	if *item.TTL < time.Second {
+		log.Printf("too short TTL for key=%q: %s", item.Key, item.TTL)
+		return defaultTTL
+	}
+	return *item.TTL
 }
 
 //------------------------------------------------------------------------------

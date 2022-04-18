@@ -34,12 +34,12 @@ func Example_basicUsage() {
 		Str: "mystring",
 		Num: 42,
 	}
-
+	ttl := time.Hour
 	if err := mycache.Set(&cache.Item{
 		Ctx:   ctx,
 		Key:   key,
 		Value: obj,
-		TTL:   time.Hour,
+		TTL:   &ttl,
 	}); err != nil {
 		panic(err)
 	}
