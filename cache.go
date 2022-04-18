@@ -171,9 +171,6 @@ func (cd *Cache) set(item *Item) ([]byte, bool, error) {
 	}
 
 	ttl := item.ttl()
-	if ttl == 0 {
-		return b, true, nil
-	}
 
 	if item.SetXX {
 		return b, true, cd.opt.Redis.SetXX(item.Context(), item.Key, b, ttl).Err()
